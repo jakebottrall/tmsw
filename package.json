@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/jakebottrall/tmsw/issues"
   },
-  "homepage": "https://github.com/jakebottrall/tmsw#readme"
+  "homepage": "https://github.com/jakebottrall/tmsw#readme",
+  "devDependencies": {
+    "typescript": "^5.0.4"
+  }
 }
