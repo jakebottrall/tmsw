@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "tRPC integration for MSW.",
   "main": "index.js",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -23,12 +26,17 @@
   "homepage": "https://github.com/jakebottrall/tmsw#readme",
   "devDependencies": {
     "@types/eslint": "^8.37.0",
+    "@types/jest": "^29.5.1",
     "@types/prettier": "^2.7.2",
     "@typescript-eslint/eslint-plugin": "^5.59.1",
     "@typescript-eslint/parser": "^5.59.1",
     "eslint": "^8.39.0",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
     "prettier": "^2.8.8",
     "prettier-plugin-organize-imports": "^3.2.2",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   }
 }
