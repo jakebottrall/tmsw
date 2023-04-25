@@ -1,0 +1,23 @@
+{
+  "name": "tmsw",
+  "version": "1.0.0",
+  "description": "tRPC integration for MSW.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jakebottrall/tmsw.git"
+  },
+  "keywords": [
+    "tRPC",
+    "msw"
+  ],
+  "author": "Jake Bottrall",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jakebottrall/tmsw/issues"
+  },
+  "homepage": "https://github.com/jakebottrall/tmsw#readme"
+}
