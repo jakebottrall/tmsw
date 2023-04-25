@@ -8,7 +8,12 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "yarn run build",
+    "prepublishOnly": "jest && eslint",
+    "preversion": "eslint",
+    "version": "git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
