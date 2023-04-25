@@ -22,6 +22,13 @@
   },
   "homepage": "https://github.com/jakebottrall/tmsw#readme",
   "devDependencies": {
+    "@types/eslint": "^8.37.0",
+    "@types/prettier": "^2.7.2",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "eslint": "^8.39.0",
+    "prettier": "^2.8.8",
+    "prettier-plugin-organize-imports": "^3.2.2",
     "typescript": "^5.0.4"
   }
 }
