@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/jakebottrall/tmsw#readme",
   "devDependencies": {
+    "@trpc/client": "^10.21.1",
     "@types/eslint": "^8.37.0",
     "@types/jest": "^29.5.1",
     "@types/prettier": "^2.7.2",
@@ -43,7 +44,8 @@
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
-    "whatwg-fetch": "^3.6.2"
+    "whatwg-fetch": "^3.6.2",
+    "zod": "^3.21.4"
   },
   "dependencies": {
     "@trpc/server": "^10.21.1",
