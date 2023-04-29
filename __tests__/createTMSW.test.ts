@@ -1,9 +1,53 @@
-import { TRPCError } from "@trpc/server";
+import { createTRPCProxyClient, httpLink } from "@trpc/client";
+import { TRPCError, initTRPC } from "@trpc/server";
 import { setupServer } from "msw/node";
 import "whatwg-fetch";
+import { z } from "zod";
 import { createTMSW } from "../src";
-import { trpc } from "./client";
-import { type AppRouter } from "./server";
+
+const t = initTRPC.create();
+
+const appRouter = t.router({
+  getManyCountries: t.procedure.query(() => {
+    return [
+      { name: "Canada", continent: "North America" },
+      { name: "Australia", continent: "Oceania" },
+      { name: "Thailand", continent: "Asia" },
+    ];
+  }),
+  addOneCountry: t.procedure
+    .input(z.object({ name: z.string(), continent: z.string() }))
+    .mutation(({ input }) => {
+      const newCountry = { ...input };
+      return newCountry;
+    }),
+  nested: t.router({
+    getManyCities: t.procedure.query(() => {
+      return [
+        { name: "Vancouver", country: "Canada" },
+        { name: "Gold Coast", country: "Australia" },
+        { name: "Bangkok", country: "Thailand" },
+      ];
+    }),
+    addOneCity: t.procedure
+      .input(z.object({ name: z.string(), country: z.string() }))
+      .mutation(({ input }) => {
+        const newCity = { ...input };
+        return newCity;
+      }),
+  }),
+});
+
+type AppRouter = typeof appRouter;
+
+export const trpc = createTRPCProxyClient<AppRouter>({
+  links: [
+    httpLink({
+      url: "/trpc",
+      headers: () => ({ "content-type": "application/json" }),
+    }),
+  ],
+});
 
 const tmsw = createTMSW<AppRouter>();
 
