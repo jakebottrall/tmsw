@@ -123,7 +123,7 @@ server.use(
 
 ### Config
 
-`createTRPCMsw` accepts a 2nd argument:
+`createTMSW` accepts a 2nd argument:
 
 ```typescript
 interface CreateTMSWConfig {
