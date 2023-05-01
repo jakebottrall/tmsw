@@ -1,6 +1,6 @@
 {
   "name": "tmsw",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "tRPC integration for MSW.",
   "main": "dist/index.js",
   "files": [
