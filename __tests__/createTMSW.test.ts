@@ -1,6 +1,7 @@
 import { createTRPCProxyClient, httpLink } from "@trpc/client";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { setupServer } from "msw/node";
+import superjson from "superjson";
 import "whatwg-fetch";
 import { z } from "zod";
 import { createTMSW } from "../src";
@@ -215,6 +216,62 @@ describe("createTMSW", () => {
           );
 
           const res = await trpcWithBasePath.getManyCountries.query();
+          expect(res).toStrictEqual([
+            { name: "Tanzania", continent: "Africa" },
+          ]);
+        });
+      });
+
+      describe("transformer", () => {
+        const tWithTransformer = initTRPC.create({ transformer: superjson });
+
+        const appRouterWithTransformer = tWithTransformer.router({
+          getManyCountries: t.procedure.query(() => {
+            return [
+              { name: "Canada", continent: "North America" },
+              { name: "Australia", continent: "Oceania" },
+              { name: "Thailand", continent: "Asia" },
+            ];
+          }),
+        });
+
+        type AppRouterWithTransformer = typeof appRouterWithTransformer;
+
+        const tmswWithTransformer = createTMSW<AppRouterWithTransformer>({
+          transformer: {
+            input: {
+              serialize: superjson.serialize,
+              deserialize: superjson.deserialize,
+            },
+            output: {
+              serialize: superjson.serialize,
+              deserialize: superjson.deserialize,
+            },
+          },
+        });
+
+        const trpcWithTransformer =
+          createTRPCProxyClient<AppRouterWithTransformer>({
+            transformer: superjson,
+            links: [
+              httpLink({
+                url: "trpc",
+                headers: () => ({ "content-type": "application/json" }),
+              }),
+            ],
+          });
+
+        it("changes serializes the response", async () => {
+          server.use(
+            tmswWithTransformer.getManyCountries.query((req, res, ctx) => {
+              return res(
+                ctx.status(200),
+                ctx.data([{ name: "Tanzania", continent: "Africa" }])
+              );
+            })
+          );
+
+          const res = await trpcWithTransformer.getManyCountries.query();
           expect(res).toStrictEqual([
             { name: "Tanzania", continent: "Africa" },
           ]);
