@@ -21,8 +21,6 @@
     <a href="https://github.com/jakebottrall/tmsw"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/jakebottrall/tmsw">View Demo</a>
-    ·
     <a href="https://github.com/jakebottrall/tmsw/issues">Report Bug</a>
     ·
     <a href="https://github.com/jakebottrall/tmsw/issues">Request Feature</a>
@@ -54,16 +52,16 @@
 
 ## About The Project
 
-tRPC integration for MSW.
+tRPC integration for MSW. Inspired & built on [msw-trpc](https://github.com/maloguertin/msw-trpc). A fantastic package, however it was missing two things I required:
+
+1. Error handling
+2. Support for `httpBatchLink` (for error handling)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 
 ## Getting Started
-
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
 
 ### Installation
 
@@ -77,7 +75,71 @@ npm i tmsw
 
 ### Usage
 
-todo.
+Use `createTMSW` & your apps `AppRouter` to build typesafe msw handlers, like so:
+
+```ts
+import { setupServer } from "msw/node";
+import { createTMSW } from "tmsw";
+
+const tmsw = createTMSW<AppRouter>();
+
+const server = setupServer(
+  tmsw.getManyCountries.query((req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.data([{ name: "Tanzania", continent: "Africa" }])
+    );
+  }),
+  tmsw.addOneCountry.mutation((req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.data({ name: "Tanzania", continent: "Africa" })
+    );
+  }),
+  tmsw.nested.getManyCities.query((req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.data([{ name: "Dodoma", country: "Tanzania" }])
+    );
+  }),
+  tmsw.nested.addOneCity.mutation((req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.data({ name: "Dodoma", country: "Tanzania" })
+    );
+  })
+);
+```
+
+`tmsw` also supports `TRPCError`. Simply throw them like you would in a procedure:
+
+```ts
+server.use(
+  tmsw.getManyCountries.query(() => {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Oops. Something went wrong",
+    });
+  })
+);
+```
+
+### Config
+
+`createTRPCMsw` accepts a 2nd argument:
+
+```typescript
+interface CreateTMSWConfig {
+  basePath?: string;
+  transformer?: CombinedDataTransformer;
+}
+```
+
+| property    | default            | details                                                                                                                 |
+| ----------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| basePath    | 'trpc'             | Defines a basepath to match all handlers against                                                                        |
+| transformer | defaultTransformer | Will transform your output data with `transformer.output.serialize` when calling `ctx.data`                             |
+| batchLink   | false              | Adds support for `httpBatchLink`. Please note right now this only supports the error handling aspect of those responses |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -120,7 +182,7 @@ Project Link: [https://github.com/jakebottrall/tmsw](https://github.com/jakebott
 
 ## Acknowledgments
 
-Inspired & influenced by [msw-trpc](https://github.com/maloguertin/msw-trpc)
+Inspired & built on [msw-trpc](https://github.com/maloguertin/msw-trpc).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
