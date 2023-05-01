@@ -189,93 +189,89 @@ describe("createTMSW", () => {
         ).rejects.toThrow("Oops. Something went wrong");
       });
     });
+  });
 
-    describe("config", () => {
-      describe("basePath", () => {
-        const tmswWithBasePath = createTMSW<AppRouter>({
-          basePath: "api/trpc",
-        });
+  describe("config", () => {
+    describe("basePath", () => {
+      const tmswWithBasePath = createTMSW<AppRouter>({
+        basePath: "api/trpc",
+      });
 
-        const trpcWithBasePath = createTRPCProxyClient<AppRouter>({
+      const trpcWithBasePath = createTRPCProxyClient<AppRouter>({
+        links: [
+          httpLink({
+            url: "api/trpc",
+            headers: () => ({ "content-type": "application/json" }),
+          }),
+        ],
+      });
+
+      it("changes the base path of the handlers", async () => {
+        server.use(
+          tmswWithBasePath.getManyCountries.query((req, res, ctx) => {
+            return res(
+              ctx.status(200),
+              ctx.data([{ name: "Tanzania", continent: "Africa" }])
+            );
+          })
+        );
+
+        const res = await trpcWithBasePath.getManyCountries.query();
+        expect(res).toStrictEqual([{ name: "Tanzania", continent: "Africa" }]);
+      });
+    });
+
+    describe("transformer", () => {
+      const tWithTransformer = initTRPC.create({ transformer: superjson });
+
+      const appRouterWithTransformer = tWithTransformer.router({
+        getManyCountries: t.procedure.query(() => {
+          return [
+            { name: "Canada", continent: "North America" },
+            { name: "Australia", continent: "Oceania" },
+            { name: "Thailand", continent: "Asia" },
+          ];
+        }),
+      });
+
+      type AppRouterWithTransformer = typeof appRouterWithTransformer;
+
+      const tmswWithTransformer = createTMSW<AppRouterWithTransformer>({
+        transformer: {
+          input: {
+            serialize: superjson.serialize,
+            deserialize: superjson.deserialize,
+          },
+          output: {
+            serialize: superjson.serialize,
+            deserialize: superjson.deserialize,
+          },
+        },
+      });
+
+      const trpcWithTransformer =
+        createTRPCProxyClient<AppRouterWithTransformer>({
+          transformer: superjson,
           links: [
             httpLink({
-              url: "api/trpc",
+              url: "trpc",
               headers: () => ({ "content-type": "application/json" }),
             }),
           ],
         });
 
-        it("changes the base path of the handlers", async () => {
-          server.use(
-            tmswWithBasePath.getManyCountries.query((req, res, ctx) => {
-              return res(
-                ctx.status(200),
-                ctx.data([{ name: "Tanzania", continent: "Africa" }])
-              );
-            })
-          );
+      it("changes serializes the response", async () => {
+        server.use(
+          tmswWithTransformer.getManyCountries.query((req, res, ctx) => {
+            return res(
+              ctx.status(200),
+              ctx.data([{ name: "Tanzania", continent: "Africa" }])
+            );
+          })
+        );
 
-          const res = await trpcWithBasePath.getManyCountries.query();
-          expect(res).toStrictEqual([
-            { name: "Tanzania", continent: "Africa" },
-          ]);
-        });
-      });
-
-      describe("transformer", () => {
-        const tWithTransformer = initTRPC.create({ transformer: superjson });
-
-        const appRouterWithTransformer = tWithTransformer.router({
-          getManyCountries: t.procedure.query(() => {
-            return [
-              { name: "Canada", continent: "North America" },
-              { name: "Australia", continent: "Oceania" },
-              { name: "Thailand", continent: "Asia" },
-            ];
-          }),
-        });
-
-        type AppRouterWithTransformer = typeof appRouterWithTransformer;
-
-        const tmswWithTransformer = createTMSW<AppRouterWithTransformer>({
-          transformer: {
-            input: {
-              serialize: superjson.serialize,
-              deserialize: superjson.deserialize,
-            },
-            output: {
-              serialize: superjson.serialize,
-              deserialize: superjson.deserialize,
-            },
-          },
-        });
-
-        const trpcWithTransformer =
-          createTRPCProxyClient<AppRouterWithTransformer>({
-            transformer: superjson,
-            links: [
-              httpLink({
-                url: "trpc",
-                headers: () => ({ "content-type": "application/json" }),
-              }),
-            ],
-          });
-
-        it("changes serializes the response", async () => {
-          server.use(
-            tmswWithTransformer.getManyCountries.query((req, res, ctx) => {
-              return res(
-                ctx.status(200),
-                ctx.data([{ name: "Tanzania", continent: "Africa" }])
-              );
-            })
-          );
-
-          const res = await trpcWithTransformer.getManyCountries.query();
-          expect(res).toStrictEqual([
-            { name: "Tanzania", continent: "Africa" },
-          ]);
-        });
+        const res = await trpcWithTransformer.getManyCountries.query();
+        expect(res).toStrictEqual([{ name: "Tanzania", continent: "Africa" }]);
       });
     });
   });
