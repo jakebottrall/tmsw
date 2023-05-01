@@ -40,7 +40,7 @@ const appRouter = t.router({
 
 type AppRouter = typeof appRouter;
 
-export const trpc = createTRPCProxyClient<AppRouter>({
+const trpc = createTRPCProxyClient<AppRouter>({
   links: [
     httpLink({
       url: "/trpc",
@@ -186,6 +186,39 @@ describe("createTMSW", () => {
         await expect(
           trpc.nested.addOneCity.mutate({ name: "Dodoma", country: "Tanzania" })
         ).rejects.toThrow("Oops. Something went wrong");
+      });
+    });
+
+    describe("config", () => {
+      describe("basePath", () => {
+        const tmswWithBasePath = createTMSW<AppRouter>({
+          basePath: "api/trpc",
+        });
+
+        const trpcWithBasePath = createTRPCProxyClient<AppRouter>({
+          links: [
+            httpLink({
+              url: "api/trpc",
+              headers: () => ({ "content-type": "application/json" }),
+            }),
+          ],
+        });
+
+        it("changes the base path of the handlers", async () => {
+          server.use(
+            tmswWithBasePath.getManyCountries.query((req, res, ctx) => {
+              return res(
+                ctx.status(200),
+                ctx.data([{ name: "Tanzania", continent: "Africa" }])
+              );
+            })
+          );
+
+          const res = await trpcWithBasePath.getManyCountries.query();
+          expect(res).toStrictEqual([
+            { name: "Tanzania", continent: "Africa" },
+          ]);
+        });
       });
     });
   });
