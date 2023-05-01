@@ -52,10 +52,7 @@
 
 ## About The Project
 
-tRPC integration for MSW. Inspired & built on [msw-trpc](https://github.com/maloguertin/msw-trpc). A fantastic package, however it was missing two things I required:
-
-1. Error handling
-2. Support for `httpBatchLink` (for error handling)
+tRPC integration for MSW. Inspired & built on [msw-trpc](https://github.com/maloguertin/msw-trpc). A fantastic package, all `tmsw` does is add support for `TRPCError`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -135,11 +132,10 @@ interface CreateTMSWConfig {
 }
 ```
 
-| property    | default            | details                                                                                                                 |
-| ----------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| basePath    | 'trpc'             | Defines a basepath to match all handlers against                                                                        |
-| transformer | defaultTransformer | Will transform your output data with `transformer.output.serialize` when calling `ctx.data`                             |
-| batchLink   | false              | Adds support for `httpBatchLink`. Please note right now this only supports the error handling aspect of those responses |
+| property    | default            | details                                                                                     |
+| ----------- | ------------------ | ------------------------------------------------------------------------------------------- |
+| basePath    | 'trpc'             | Defines a basepath to match all handlers against                                            |
+| transformer | defaultTransformer | Will transform your output data with `transformer.output.serialize` when calling `ctx.data` |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
