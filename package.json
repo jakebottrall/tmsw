@@ -9,13 +9,9 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint",
-    "postversion": "git push && git push --tags",
-    "prepare": "yarn run build",
-    "prepublishOnly": "jest && eslint",
-    "preversion": "eslint",
     "test": "jest",
     "types": "tsc --noEmit",
-    "version": "git add -A src"
+    "release": "auto shipit"
   },
   "repository": {
     "type": "git",
@@ -57,5 +53,12 @@
   "peerDependencies": {
     "@trpc/server": "10.x",
     "msw": "1.x"
+  },
+  "auto": {
+    "plugins": [
+      "npm",
+      "all-contributors"
+    ],
+    "onlyPublishWithReleaseLabel": true
   }
 }
