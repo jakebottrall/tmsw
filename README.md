@@ -14,7 +14,6 @@
   </a>
 
 <h3 align="center">tmsw</h3>
-
   <p align="center">
     tRPC integration for MSW.
     <br />
