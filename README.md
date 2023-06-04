@@ -62,7 +62,19 @@ tRPC integration for MSW. Inspired & built on [msw-trpc](https://github.com/malo
 ### Installation
 
 ```sh
-npm i tmsw
+npm install tmsw --save-dev
+```
+
+or
+
+```sh
+yarn add tmsw --dev
+```
+
+or
+
+```sh
+pnpm add tmsw --save-dev
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
