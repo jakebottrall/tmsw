@@ -18,13 +18,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.1.1
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "yarn"
-          cache-dependency-path: yarn.lock
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Fetch tags
         run: git fetch --tags
@@ -33,10 +35,10 @@ jobs:
         run: git config --global user.email "jakebottrall@gmail.com"
 
       - name: Install dependencies
-        run: yarn install
+        run: pnpm install
 
       - name: Build
-        run: yarn build
+        run: pnpm build
 
       - name: Release
-        run: yarn release
+        run: pnpm release

@@ -16,16 +16,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.1.1
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "yarn"
-          cache-dependency-path: yarn.lock
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: yarn
+        run: pnpm install
 
       - name: Run eslint
-        run: yarn lint
+        run: pnpm lint
